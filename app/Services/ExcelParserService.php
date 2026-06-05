@@ -36,8 +36,52 @@ class ExcelParserService
             return date('Y-m', $timestamp);
         }
         
-        if (is_string($serial) && preg_match('/^\d{4}-\d{2}$/', trim($serial))) {
-            return trim($serial);
+        if (is_string($serial)) {
+            $cleaned = trim($serial);
+            if (preg_match('/^\d{4}-\d{2}$/', $cleaned)) {
+                return $cleaned;
+            }
+
+            // Map Indonesian month names to English
+            $indToEng = [
+                'januari' => 'january',
+                'pebruari' => 'february',
+                'februari' => 'february',
+                'maret' => 'march',
+                'april' => 'april',
+                'mei' => 'may',
+                'juni' => 'june',
+                'juli' => 'july',
+                'agustus' => 'august',
+                'september' => 'september',
+                'oktober' => 'october',
+                'nopember' => 'november',
+                'november' => 'november',
+                'desember' => 'december',
+                'jan' => 'jan',
+                'peb' => 'feb',
+                'feb' => 'feb',
+                'mar' => 'mar',
+                'apr' => 'apr',
+                'jun' => 'jun',
+                'jul' => 'jul',
+                'agu' => 'aug',
+                'sep' => 'sep',
+                'okt' => 'oct',
+                'nop' => 'nov',
+                'nov' => 'nov',
+                'des' => 'dec',
+            ];
+
+            $lower = strtolower($cleaned);
+            foreach ($indToEng as $ind => $eng) {
+                $lower = str_replace($ind, $eng, $lower);
+            }
+
+            $timestamp = strtotime($lower);
+            if ($timestamp !== false && $timestamp > 0) {
+                return date('Y-m', $timestamp);
+            }
         }
 
         return null;
