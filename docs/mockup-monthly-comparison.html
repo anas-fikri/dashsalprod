@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup Perbandingan Bulanan - Dashboard Penggajian Industri</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --panel-bg: rgba(17, 24, 39, 0.7);
+            --panel-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --accent-primary: #3b82f6; /* Blue */
+            --accent-primary-glow: rgba(59, 130, 246, 0.15);
+            --accent-success: #10b981; /* Green */
+            --accent-success-glow: rgba(16, 185, 129, 0.15);
+            --accent-warning: #f59e0b; /* Yellow */
+            --accent-purple: #8b5cf6; /* Violet */
+            --accent-purple-glow: rgba(139, 92, 246, 0.2);
+            --sidebar-width: 260px;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+                radial-gradient(at 90% 80%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        aside {
+            width: var(--sidebar-width);
+            background: rgba(10, 15, 30, 0.95);
+            border-right: 1px solid var(--panel-border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem 1.5rem;
+            position: fixed;
+            height: 100vh;
+            z-index: 10;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .nav-item.active a, .nav-item a:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 3px solid var(--accent-primary);
+            padding-left: calc(1rem - 3px);
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid var(--panel-border);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .username {
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--panel-border);
+            padding-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        select, button {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        select:hover, button:hover {
+            border-color: var(--accent-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        button.btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-purple));
+            border: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        button.btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* KPI Cards Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .kpi-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: all var(--transition-speed) ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-primary);
+        }
+
+        .kpi-card.success::before { background: var(--accent-success); }
+        .kpi-card.warning::before { background: var(--accent-warning); }
+        .kpi-card.purple::before { background: var(--accent-purple); }
+
+        .kpi-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .kpi-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0.2rem 0;
+        }
+
+        .kpi-meta {
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .trend-up { color: var(--accent-success); }
+        .trend-down { color: #ef4444; }
+
+        /* Dashboard Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* AI Panel */
+        .ai-panel {
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(139, 92, 246, 0.05));
+            position: relative;
+        }
+
+        .ai-panel::after {
+            content: 'AI Insights';
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: var(--accent-purple);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .ai-indicator {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-purple);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-purple);
+            animation: pulse 1.5s infinite;
+        }
+
+        .ai-content {
+            font-size: 0.88rem;
+            line-height: 1.5;
+            color: #d1d5db;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .ai-recommendation {
+            border-left: 2px solid var(--accent-purple);
+            padding-left: 0.75rem;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Table Styling */
+        .table-card {
+            grid-column: span 2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--panel-border);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-prod {
+            background-color: var(--accent-primary-glow);
+            color: #60a5fa;
+        }
+
+        .badge-non-prod {
+            background-color: var(--accent-purple-glow);
+            color: #c084fc;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .table-card {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside>
+        <div class="logo-area">
+            <div class="logo-icon">N</div>
+            <div class="logo-text">Nobi SDM</div>
+        </div>
+        <ul class="nav-links">
+            <li class="nav-item"><a href="#">Dashboard Ringkasan</a></li>
+            <li class="nav-item active"><a href="#">Perbandingan Bulanan</a></li>
+            <li class="nav-item"><a href="#">Import Data</a></li>
+            <li class="nav-item"><a href="#">Histori Aktivitas</a></li>
+            <li class="nav-item"><a href="#">Pengaturan Sistem</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+                <span class="username">Anas Fikri</span>
+                <span class="user-role">Administrator</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main>
+        <header>
+            <div class="header-title">
+                <h1>Tren Bulanan & Analisis Gaji</h1>
+                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    Bandingkan pengeluaran gaji manpower dengan metrik penjualan dan biaya produksi.
+                </p>
+            </div>
+            <div class="header-actions">
+                <select id="period-select">
+                    <option value="2026-03">Maret 2026</option>
+                    <option value="2026-02">Februari 2026</option>
+                    <option value="2026-01">Januari 2026</option>
+                </select>
+                <button class="btn-primary">+ Import Excel</button>
+            </div>
+        </header>
+
+        <!-- KPI Cards Grid -->
+        <div class="kpi-grid">
+            <div class="kpi-card purple">
+                <span class="kpi-title">Total Beban Manpower</span>
+                <span class="kpi-val">Rp 374,18 M</span>
+                <div class="kpi-meta">
+                    <span class="trend-down">↓ 1.8%</span> dari bulan lalu
+                </div>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-title">Rasio Manpower vs Penjualan</span>
+                <span class="kpi-val">2.67%</span>
+                <div class="kpi-meta">
+                    <span class="trend-up">↑ 0.1%</span> dari target optimal (< 15%)
+                </div>
+            </div>
+            <div class="kpi-card success">
+                <span class="kpi-title">Rasio Gaji Produksi vs Biaya Produksi</span>
+                <span class="kpi-val">1.61%</span>
+                <div class="kpi-meta">
+                    <span class="trend-down">↓ 0.05%</span> perbaikan efisiensi
+                </div>
+            </div>
+            <div class="kpi-card warning">
+                <span class="kpi-title">Rasio Jumlah Karyawan Aktif</span>
+                <span class="kpi-val">311 Karyawan</span>
+                <div class="kpi-meta">
+                    Tetap stabil (NPA & NES)
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Visual & AI Analysis -->
+        <div class="dashboard-grid">
+            <!-- Chart Card -->
+            <div class="card">
+                <div class="card-title">
+                    <span>Grafik Tren Kinerja vs Manpower Cost</span>
+                    <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400;">Q1 2026 (Jan - Mar)</span>
+                </div>
+                <div style="height: 320px; width: 100%; position: relative;">
+                    <canvas id="monthlyTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Insight Card -->
+            <div class="card ai-panel">
+                <div class="ai-header">
+                    <div class="ai-indicator"></div>
+                    <span>AI Executive Assistant</span>
+                </div>
+                <div class="ai-content">
+                    <p><strong>Tren Efisiensi Q1 2026:</strong></p>
+                    <p>Total manpower cost turun sebesar <strong>1.8%</strong> pada bulan Maret 2026, yang dipicu penurunan jumlah karyawan tidak tetap (Harian/OS).</p>
+                    <p>Sementara itu, <strong>Nominal Penjualan</strong> mengalami kenaikan tren. Rasio pengeluaran manpower dibanding penjualan saat ini berada di level <strong>2.67%</strong>, yang tergolong sangat efisien dibandingkan target aman industri sebesar 15%.</p>
+                    <div class="ai-recommendation">
+                        "Biaya produksi naik tipis pada Maret. Disarankan untuk memantau apakah kenaikan lembur di divisi Elektrikal berdampak positif pada peningkatan output produksi."
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Card -->
+            <div class="card table-card">
+                <div class="card-title">Rincian Distribusi Gaji Per Departemen (Maret 2026)</div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Departemen</th>
+                                <th>Kategori</th>
+                                <th>Jumlah Staff</th>
+                                <th>Biaya Gaji Pokok</th>
+                                <th>Gaji Diterima (Nett)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Elektrikal</td>
+                                <td><span class="badge badge-prod">Production</span></td>
+                                <td>31</td>
+                                <td>Rp 135.200.000</td>
+                                <td>Rp 228.349.028</td>
+                            </tr>
+                            <tr>
+                                <td>Marketing</td>
+                                <td><span class="badge badge-non-prod">Non-Production</span></td>
+                                <td>9</td>
+                                <td>Rp 58.400.000</td>
+                                <td>Rp 130.048.727</td>
+                            </tr>
+                            <tr>
+                                <td>Keuangan & Akunting</td>
+                                <td><span class="badge badge-non-prod">Non-Production</span></td>
+                                <td>10</td>
+                                <td>Rp 46.500.000</td>
+                                <td>Rp 110.226.902</td>
+                            </tr>
+                            <tr>
+                                <td>Manajemen / Direksi</td>
+                                <td><span class="badge badge-non-prod">Non-Production</span></td>
+                                <td>2</td>
+                                <td>Rp 40.000.000</td>
+                                <td>Rp 74.124.788</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Chart Configuration Script -->
+    <script>
+        const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
+        
+        // Data derived from '3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx'
+        const chartData = {
+            labels: ['Januari', 'Februari', 'Maret'],
+            datasets: [
+                {
+                    label: 'Total Manpower (Juta Rp)',
+                    data: [382.4, 380.1, 374.1], // Cumulative salaries
+                    type: 'line',
+                    borderColor: '#8b5cf6',
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                    yAxisID: 'y1',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Nominal Penjualan (Juta Rp / 10)',
+                    data: [1250, 1320, 1400], // Hypothetical scaled
+                    type: 'bar',
+                    backgroundColor: '#3b82f6',
+                    yAxisID: 'y',
+                    borderRadius: 6,
+                    barPercentage: 0.6
+                },
+                {
+                    label: 'Biaya Produksi (Juta Rp / 10)',
+                    data: [850, 900, 920], // Hypothetical scaled
+                    type: 'bar',
+                    backgroundColor: '#10b981',
+                    yAxisID: 'y',
+                    borderRadius: 6,
+                    barPercentage: 0.6
+                }
+            ]
+        };
+
+        const config = {
+            data: chartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#9ca3af',
+                            font: { family: 'Plus Jakarta Sans', size: 11 }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        ticks: { color: '#9ca3af' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.04)' },
+                        ticks: { color: '#9ca3af' }
+                    }
+                }
+            }
+        };
+
+        new Chart(ctx, config);
+    </script>
+</body>
+</html>
