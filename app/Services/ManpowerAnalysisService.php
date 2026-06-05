@@ -40,14 +40,14 @@ class ManpowerAnalysisService
                 ->select(
                     DB::raw('SUM(net_salary) as total_net_salary'),
                     DB::raw('SUM(gross_salary) as total_gross_salary'),
-                    DB::raw('SUM(CASE WHEN is_production = 1 THEN net_salary ELSE 0 END) as prod_net_salary'),
-                    DB::raw('SUM(CASE WHEN is_production = 0 THEN net_salary ELSE 0 END) as non_prod_net_salary'),
-                    DB::raw('SUM(CASE WHEN structural_status = "STR1" THEN net_salary ELSE 0 END) as str1_salary'),
-                    DB::raw('SUM(CASE WHEN structural_status = "STR2" THEN net_salary ELSE 0 END) as str2_salary'),
-                    DB::raw('SUM(CASE WHEN structural_status = "NSTR" THEN net_salary ELSE 0 END) as nstr_salary'),
+                    DB::raw('SUM(CASE WHEN is_production = true THEN net_salary ELSE 0 END) as prod_net_salary'),
+                    DB::raw('SUM(CASE WHEN is_production = false THEN net_salary ELSE 0 END) as non_prod_net_salary'),
+                    DB::raw("SUM(CASE WHEN structural_status = 'STR1' THEN net_salary ELSE 0 END) as str1_salary"),
+                    DB::raw("SUM(CASE WHEN structural_status = 'STR2' THEN net_salary ELSE 0 END) as str2_salary"),
+                    DB::raw("SUM(CASE WHEN structural_status = 'NSTR' THEN net_salary ELSE 0 END) as nstr_salary"),
                     DB::raw('COUNT(DISTINCT nik) as employee_count'),
-                    DB::raw('COUNT(DISTINCT CASE WHEN is_production = 1 THEN nik END) as prod_employee_count'),
-                    DB::raw('COUNT(DISTINCT CASE WHEN is_production = 0 THEN nik END) as non_prod_employee_count')
+                    DB::raw('COUNT(DISTINCT CASE WHEN is_production = true THEN nik END) as prod_employee_count'),
+                    DB::raw('COUNT(DISTINCT CASE WHEN is_production = false THEN nik END) as non_prod_employee_count')
                 )
                 ->first();
 
