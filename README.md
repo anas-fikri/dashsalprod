@@ -59,6 +59,22 @@ Role MVP:
 - `admin`: dapat login, import data payroll, import data operasional, melihat histori upload, melihat dashboard dan laporan, serta melakukan export
 - `operator/user`: dapat login dan hanya melihat dashboard serta laporan
 
+## Pengelolaan Master Data Karyawan (Roster)
+
+Sistem menggunakan referensi Master Roster Karyawan Aktif untuk memvalidasi keabsahan data payroll. Pada versi MVP ini, data roster dibaca dinamis dari file Excel di server (bukan dari database).
+
+### Cara Menambah / Mengubah Data Roster:
+1. Unggah file Excel roster ke direktori server: `/data/docker-data/dashsalprod/docs/templates/`
+2. Gunakan penamaan file dengan format: `3 LIST KARYAWAN [Nama Bulan] [Tahun].xlsx` (Contoh: `3 LIST KARYAWAN Maret 2026.xlsx`).
+
+### Struktur Format File Roster:
+* **Sheet Wajib**: `STR1`, `STR2`, dan `NSTR` (masing-masing untuk tingkatan struktural).
+* **Kolom Wajib (dimulai dari Baris 3/Header)**:
+  * Kolom B: `No.`
+  * Kolom C: `Kode Pegawai` (sebagai NIK)
+  * Kolom D: `Nama Pegawai` (sebagai Nama Lengkap)
+  * Kolom E: `NPWP Perusahaan`
+
 ## Akses Halaman Lokal (localhost)
 
 Jalankan aplikasi Laravel di terminal dari root project:
