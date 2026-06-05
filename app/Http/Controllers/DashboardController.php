@@ -177,7 +177,7 @@ class DashboardController extends Controller
         }
 
         if ($function !== null && $function !== '') {
-            $query->where('payroll_data.is_production', filter_var($function, FILTER_VALIDATE_BOOLEAN) ? 1 : 0);
+            $query->where('payroll_data.is_production', filter_var($function, FILTER_VALIDATE_BOOLEAN));
         }
 
         $records = $query->orderBy('nama', 'asc')->get();
