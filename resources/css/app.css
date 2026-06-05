@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Fira Sans', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+  --font-display: 'Fira Code', monospace;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));

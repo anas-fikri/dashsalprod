@@ -29,6 +29,15 @@ Dokumen awal yang tersedia:
 - [Data dictionary](./docs/data-dictionary.md)
 - [Mockup UI perbandingan bulanan](./docs/mockup-monthly-comparison.html)
 
+File pendukung yang tersedia:
+- **Template & Data Excel (di `./docs/templates/`):**
+  - [3 LIST KARYAWAN Maret 2026.xlsx](./docs/templates/3%20LIST%20KARYAWAN%20Maret%202026.xlsx) (Data roster karyawan)
+  - [3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx](./docs/templates/3.%20Rekap%20Pembayaran%20Gaji%20Karyawan%202026%20-%20Maret.xlsx) (Data rekap agregat gaji)
+  - [GAJI NES ALL DEPT MAR 2026 - Anas edited joined.xlsx](./docs/templates/GAJI%20NES%20ALL%20DEPT%20MAR%202026%20-%20Anas%20edited%20joined.xlsx) (Data payroll detail)
+- **Gambar & Aset UI Mockup (di `./docs/images/`):**
+  - [Mockup UI Screen 1](./docs/images/ig_0f8f77c2d87e746b0169ee07209aa88191a3eae5a7c08103bf.png)
+  - [Mockup UI Screen 2](./docs/images/ig_0f8f77c2d87e746b0169ee0be37ed0819187ff4e084a9f3e96.png)
+
 Istilah utama:
 - `production`: posisi yang berkaitan langsung dengan proses produksi pada pabrik manufaktur
 - `non-production`: posisi pendukung yang tidak terlibat langsung pada proses produksi

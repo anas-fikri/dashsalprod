@@ -75,10 +75,10 @@ Classify `is_production` boolean based on the `sub_department` value:
 ## ⚖️ Reconciliation & Verification Rules
 1. **Salary Totals Reconciliation**:
    * When importing a payroll file (e.g., entity `NES` for month `2026-03`), calculate `SUM(GajiDiterima)`.
-   * Cross-reference this sum with the monthly total on sheet `NES` of `3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx`.
+   * Cross-reference this sum with the monthly total on sheet `NES` of `docs/templates/3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx`.
    * Flag any discrepancies to the user before committing to the DB.
 2. **Roster Match Validation**:
-   * Validate that the imported NIK is present in the `3 LIST KARYAWAN Maret 2026.xlsx` active roster sheets (`STR1`, `STR2`, `NSTR`).
+   * Validate that the imported NIK is present in the `docs/templates/3 LIST KARYAWAN Maret 2026.xlsx` active roster sheets (`STR1`, `STR2`, `NSTR`).
 
 ---
 

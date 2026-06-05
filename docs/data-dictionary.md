@@ -1,6 +1,6 @@
 # Data Dictionary - Dashboard Penggajian Industri
 
-Dokumen ini mendefinisikan struktur kolom dari file import Excel payroll (`GAJI NES ALL DEPT MAR 2026 - Anas edited joined.xlsx` - Sheet `TEMP`) dan bagaimana data tersebut dipetakan ke tabel `payroll_data`.
+Dokumen ini mendefinisikan struktur kolom dari file import Excel payroll (`docs/templates/GAJI NES ALL DEPT MAR 2026 - Anas edited joined.xlsx` - Sheet `TEMP`) dan bagaimana data tersebut dipetakan ke tabel `payroll_data`.
 
 ## Pemetaan Kolom Excel ke Database
 

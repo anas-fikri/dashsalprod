@@ -2,7 +2,7 @@
 
 Dokumen ini menjelaskan struktur file Excel yang digunakan dalam sistem, serta bagaimana data di dalamnya diolah untuk validasi dan konsistensi.
 
-## 1. Struktur File Payroll (`GAJI NES ALL DEPT MAR 2026 - Anas edited joined.xlsx`)
+## 1. Struktur File Payroll (`docs/templates/GAJI NES ALL DEPT MAR 2026 - Anas edited joined.xlsx`)
 File ini merupakan sumber utama data transaksi gaji karyawan per bulan. Format yang didukung adalah format tabel datar (flat table) pada sheet `TEMP`.
 
 ### Kolom Penting:
@@ -16,7 +16,7 @@ File ini merupakan sumber utama data transaksi gaji karyawan per bulan. Format y
 
 ---
 
-## 2. Struktur Database Roster Karyawan (`3 LIST KARYAWAN Maret 2026.xlsx`)
+## 2. Struktur Database Roster Karyawan (`docs/templates/3 LIST KARYAWAN Maret 2026.xlsx`)
 File ini digunakan untuk keperluan pencocokan data (reconcile) status kepegawaian aktif.
 * **Sheet `STR1`**: Daftar karyawan kelompok struktural tingkat 1 (Kadept, Manager).
 * **Sheet `STR2`**: Daftar karyawan kelompok struktural tingkat 2 (Kabag, Karu, PM).
@@ -27,7 +27,7 @@ Sistem dapat mencocokkan apakah NIK dari file Payroll terdaftar di roster aktif 
 
 ---
 
-## 3. File Rekap Agregat (`3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx`)
+## 3. File Rekap Agregat (`docs/templates/3. Rekap Pembayaran Gaji Karyawan 2026 - Maret.xlsx`)
 File ini berisi ringkasan agregat nilai payroll bulanan per departemen untuk entitas `NES` dan `NPA`.
 * **Sheet `Rekap All 2026`**: Akumulasi biaya SDM bulanan seluruh entitas.
 * **Sheet `NES`**: Biaya per departemen khusus untuk PT Nobi Elektrika Sejahtera.

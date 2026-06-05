@@ -1,0 +1,38 @@
+name: dashsalprod
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dashsalprod-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+    networks:
+      - app_network
+      - shared_db_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: dashsalprod-nginx
+    restart: unless-stopped
+    ports:
+      - "8090:80"
+    volumes:
+      - .:/var/www/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+  shared_db_network:
+    external: true
