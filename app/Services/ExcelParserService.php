@@ -213,6 +213,8 @@ class ExcelParserService
 
         $warnings = [];
         $rosterNiks = [];
+        $rosterNames = [];
+        $rosterFullNames = [];
 
         // 2. Load Active Roster NIKs
         if ($rosterFile && File::exists($rosterFile)) {
@@ -224,18 +226,40 @@ class ExcelParserService
                     $sheet = $spreadsheet->getSheetByName($sheetName);
                     if ($sheet) {
                         $rows = $sheet->toArray();
-                        array_shift($rows); // Remove header
+                        
+                        $nikColIdx = null;
+                        $namaColIdx = null;
+                        $headerFound = false;
+
                         foreach ($rows as $row) {
-                            // Column indices for NIK might differ, let's scan for NIK-like patterns or assume first non-empty column/column index 1
-                            // In "3 LIST KARYAWAN Maret 2026.xlsx", let's check headers or look at Column B/C.
-                            // Typically: Column A (No), Column B (NIK), Column C (Nama). Let's check both index 1 and 2
-                            $nik1 = trim($row[1] ?? '');
-                            $nik2 = trim($row[2] ?? '');
-                            if ($nik1 !== '') {
-                                $rosterNiks[$nik1] = true;
+                            if (!$headerFound) {
+                                foreach ($row as $colIdx => $val) {
+                                    if (is_string($val)) {
+                                        $valLower = strtolower(trim($val));
+                                        if (str_contains($valLower, 'kode pegawai') || $valLower === 'nik') {
+                                            $nikColIdx = $colIdx;
+                                        }
+                                        if (str_contains($valLower, 'nama pegawai') || $valLower === 'nama') {
+                                            $namaColIdx = $colIdx;
+                                        }
+                                    }
+                                }
+                                if ($nikColIdx !== null && $namaColIdx !== null) {
+                                    $headerFound = true;
+                                }
+                                continue;
                             }
-                            if ($nik2 !== '') {
-                                $rosterNiks[$nik2] = true;
+
+                            $nikVal = isset($row[$nikColIdx]) ? trim($row[$nikColIdx]) : '';
+                            $namaVal = isset($row[$namaColIdx]) ? trim($row[$namaColIdx]) : '';
+
+                            if ($nikVal !== '') {
+                                $rosterNiks[$nikVal] = true;
+                            }
+                            if ($namaVal !== '') {
+                                $cleanName = strtolower(preg_replace('/\s+/', ' ', trim($namaVal)));
+                                $rosterNames[$cleanName] = $nikVal;
+                                $rosterFullNames[$nikVal] = trim($namaVal);
                             }
                         }
                     }
@@ -247,15 +271,45 @@ class ExcelParserService
             $warnings[] = "File Roster Karyawan untuk bulan {$monthName} {$year} tidak ditemukan di {$templatesDir}.";
         }
 
-        // 3. Roster Match Validation
+        // 3. Roster Match Validation & Data Cleansing Fallback
         $unmatchedCount = 0;
-        if (!empty($rosterNiks)) {
-            foreach ($parsedData as &$row) {
-                $nik = $row['nik'];
-                if (!isset($rosterNiks[$nik])) {
-                    $row['validation_warnings'][] = "NIK '{$nik}' tidak terdaftar di Roster Karyawan Aktif.";
-                    $unmatchedCount++;
+        foreach ($parsedData as &$row) {
+            $nik = trim($row['nik']);
+            
+            if ($nik === '') {
+                $row['validation_warnings'][] = "NIK kosong.";
+                $unmatchedCount++;
+                continue;
+            }
+
+            if (isset($rosterNiks[$nik])) {
+                // Perfect NIK match. Let's fill in the name from roster if empty in payroll
+                if (empty(trim($row['nama'])) && isset($rosterFullNames[$nik])) {
+                    $row['nama'] = $rosterFullNames[$nik];
                 }
+                continue;
+            }
+
+            // NIK not found, try to match by name (in case name was put in the NIK column by mistake)
+            $cleanNikName = strtolower(preg_replace('/\s+/', ' ', $nik));
+            $matchedNik = null;
+
+            foreach ($rosterNames as $rostName => $rostNik) {
+                if ($rostName === $cleanNikName || str_starts_with($rostName, $cleanNikName) || str_starts_with($cleanNikName, $rostName)) {
+                    $matchedNik = $rostNik;
+                    break;
+                }
+            }
+
+            if ($matchedNik) {
+                $correctName = $rosterFullNames[$matchedNik];
+                $row['validation_warnings'][] = "Nama '{$nik}' terdeteksi di kolom NIK. NIK otomatis dikoreksi menjadi '{$matchedNik}'.";
+                // Correct the NIK and Name in the parsed row
+                $row['nik'] = $matchedNik;
+                $row['nama'] = $correctName;
+            } else {
+                $row['validation_warnings'][] = "NIK '{$nik}' tidak terdaftar di Roster Karyawan Aktif.";
+                $unmatchedCount++;
             }
         }
 
